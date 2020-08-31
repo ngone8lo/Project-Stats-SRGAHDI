@@ -1,0 +1,148 @@
+library(readxl)
+library(writexl)
+library(agricolae)
+
+SRAGE<-read_excel("Aggregate_Dataset_Age_Group.xlsx")
+class(SRAGE$Suicide_per_100k)
+class(SRAGE$Age_Group)
+x<-as.factor(SRAGE$Age_Group)
+tapply(SRAGE$Suicide_per_100k, SRAGE$Age_Group, mean)   
+tapply(SRAGE$Suicide_per_100k, SRAGE$Age_Group, sd)   
+tapply(SRAGE$Suicide_per_100k, SRAGE$Age_Group, length)  
+SRAGE$Age_Group<-factor(SRAGE$Age_Group, levels=c("5-24 years", "25-34 years", "35-54 years", "55+ years"))
+boxplot(Suicide_per_100k ~ Age_Group,col=c('antiquewhite',"bisque2","cornsilk3","azure3"), data=SRAGE)
+results = aov(Suicide_per_100k ~ Age_Group, data=SRAGE)
+summary(results)
+results1 = aov(SRAGE$Suicide_per_100k ~ x)
+summary(results1)
+TukeyHSD(results)
+
+
+
+
+
+
+SRAGEMALE<-read_excel("Aggregate_Dataset_Age_Group_Male.xlsx")
+class(SRAGEMALE$Suicide_per_100k)
+class(SRAGEMALE$Age_Group)
+tapply(SRAGEMALE$Suicide_per_100k, SRAGEMALE$Age_Group, mean)   
+tapply(SRAGEMALE$Suicide_per_100k, SRAGEMALE$Age_Group, sd)   
+tapply(SRAGEMALE$Suicide_per_100k, SRAGEMALE$Age_Group, length)  
+SRAGEMALE$Age_Group<-factor(SRAGEMALE$Age_Group, levels=c("5-24 years", "25-34 years", "35-54 years", "55+ years"))
+boxplot(Suicide_per_100k ~ Age_Group, col=c('darkseagreen1',"darkseagreen2","darkseagreen3","darkseagreen4"), data=SRAGEMALE)
+results = aov(Suicide_per_100k ~ Age_Group, data=SRAGEMALE)
+summary(results)
+TukeyHSD(results)
+
+
+
+
+
+
+SRAGEFEMALE<-read_excel("Aggregate_Dataset_Age_Group_Female.xlsx")
+class(SRAGEFEMALE$Suicide_per_100k)
+class(SRAGEFEMALE$Age_Group)
+tapply(SRAGEFEMALE$Suicide_per_100k, SRAGEFEMALE$Age_Group, mean)   
+tapply(SRAGEFEMALE$Suicide_per_100k, SRAGEFEMALE$Age_Group, sd)   
+tapply(SRAGEFEMALE$Suicide_per_100k, SRAGEFEMALE$Age_Group, length)  
+SRAGEFEMALE$Age_Group<-factor(SRAGEFEMALE$Age_Group, levels=c("5-24 years", "25-34 years", "35-54 years", "55+ years"))
+boxplot(Suicide_per_100k ~ Age_Group, col=c('rosybrown1',"rosybrown2","rosybrown3","rosybrown4"), data=SRAGEFEMALE)
+results = aov(Suicide_per_100k ~ Age_Group, data=SRAGEFEMALE)
+summary(results)
+TukeyHSD(results)
+
+
+
+
+
+SRGENDER<-read_excel("Aggregate_Dataset_GENDER.xlsx")
+class(SRGENDER$Suicide_per_100k)
+class(SRGENDER$Gender)
+tapply(SRGENDER$Suicide_per_100k, SRGENDER$Gender, mean)   
+tapply(SRGENDER$Suicide_per_100k, SRGENDER$Gender, sd)   
+tapply(SRGENDER$Suicide_per_100k, SRGENDER$Gender, length)
+boxplot(Suicide_per_100k ~ Gender, col=c('rosybrown','darkseagreen'),data=SRGENDER)
+t.test(SRGENDER$Suicide_per_100k ~ SRGENDER$Gender, data=SRGENDER)
+
+
+
+
+
+
+
+SRHDI<-read_excel("Aggregate_Dataset_HDI.xlsx")
+class(SRHDI$Suicide_per_100k)
+class(SRHDI$HDI)
+summary(SRHDI$HDI)
+sd(SRHDI$HDI)
+boxplot(SRHDI$HDI,col=c('seashell'), ylab ="HDI" )
+model_hdi <- lm(Suicide_per_100k ~ HDI , data= SRHDI)
+summary(model_hdi)
+
+
+
+
+
+
+
+SRMAIN<-read_excel("Aggregate_Dataset_Main.xlsx")
+str(SRMAIN)
+summary(SRMAIN)
+model_main <- lm(Suicide_per_100k ~ Gender + Age_Group, data= SRMAIN)
+summary(model_main)
+
+
+
+
+
+
+SRMAIN<-read_excel("Aggregate_Dataset_Main.xlsx")
+str(SRMAIN)
+Gender_factor <- as.factor(SRMAIN$Gender)
+Age_Group_factor <- as.factor(SRMAIN$Age_Group)
+Age_releveled <- relevel(Age_Group_factor, ref="5-24 years")
+model_main_1 <- lm(Suicide_per_100k ~ Gender_factor + Age_releveled, data= SRMAIN)
+summary(model_main_1)
+
+
+
+
+
+
+
+
+SRMAIN<-read_excel("Aggregate_Dataset_Main.xlsx")
+Gender_factor <- as.factor(SRMAIN$Gender)
+Gender_releveled <- relevel(Gender_factor, ref="male")
+Age_Group_factor <- as.factor(SRMAIN$Age_Group)
+Age_releveled <- relevel(Age_Group_factor, ref="55+ years")
+model_main_2 <- lm(Suicide_per_100k ~ Gender_releveled + Age_releveled, data= SRMAIN)
+summary(model_main_2)
+
+
+
+
+
+#linear regression
+library(magrittr)
+library(ggpubr)
+library(ggplot2)
+
+b <- ggplot(SRHDI, aes(x = HDI, y = Suicide_per_100k))
+# Scatter plot with regression line
+b + geom_point(shape=18) + geom_smooth(method = "lm") 
+
+
+
+# Add regression line and confidence interval
+# Add correlation coefficient: stat_cor()
+ggscatter(SRHDI, x = "HDI", y = "Suicide_per_100k",shape = 3,
+          size = 1, color = "red",
+          add = "reg.line", conf.int = TRUE,    
+          add.params = list(fill = "gray"),
+          ggtheme = theme_minimal()
+)+
+  stat_cor(
+    aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~")), 
+    label.x = 0.6, label.y=30
+  )
