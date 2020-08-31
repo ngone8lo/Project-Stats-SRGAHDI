@@ -1,0 +1,68 @@
+#Aggregating and Merging 
+library(readxl)
+library(writexl)
+
+#Main Dataset: Aggregating by Country, Gender, Age Group
+dataset_1<-read_excel("Dataset_1.xlsx")
+Table1<-aggregate(dataset_1$Suicides, by=list(dataset_1$Country,dataset_1$Gender,dataset_1$Age_Group),FUN = sum)
+Table2<-aggregate(dataset_1$Population, by=list(dataset_1$Country,dataset_1$Gender,dataset_1$Age_Group),FUN = mean)
+Table3<-aggregate(dataset_1$HDI, by=list(dataset_1$Country,dataset_1$Gender,dataset_1$Age_Group),FUN = mean)
+Table4<-aggregate(dataset_1$Annual_GDP, by=list(dataset_1$Country,dataset_1$Gender,dataset_1$Age_Group),FUN = mean)
+
+Table5<-merge(Table1,Table2,by=c("Group.1","Group.2","Group.3"))
+Table6<-merge(Table5,Table3,by=c("Group.1","Group.2","Group.3"))
+Table7<-merge(Table6,Table4,by=c("Group.1","Group.2","Group.3"))
+write_xlsx(Table7,"Aggregate_Dataset.xlsx")
+
+
+#Gender Dataset: Aggregating by Country and Age_Group
+dataset_1<-read_excel("Aggregate_Dataset.xlsx")
+Table1<-aggregate(dataset_1$Suicides, by=list(dataset_1$Country,dataset_1$Gender),FUN = sum)
+Table2<-aggregate(dataset_1$Population, by=list(dataset_1$Country,dataset_1$Gender),FUN = sum)
+Table3<-merge(Table1,Table2,by=c("Group.1","Group.2"))
+write_xlsx(Table3,"Aggregate_Dataset_Gender.xlsx")
+
+
+#Age_Group Dataset: Aggregating by Country and Gender
+dataset_1<-read_excel("Aggregate_Dataset.xlsx")
+Table1<-aggregate(dataset_1$Suicides, by=list(dataset_1$Country,dataset_1$Age_Group),FUN = sum)
+Table2<-aggregate(dataset_1$Population, by=list(dataset_1$Country,dataset_1$Age_Group),FUN = sum)
+Table3<-merge(Table1,Table2,by=c("Group.1","Group.2"))
+write_xlsx(Table3,"Aggregate_Dataset_Age_Group.xlsx")
+
+
+#HDI Dataset: Aggregating by Country
+dataset_1<-read_excel("Aggregate_Dataset.xlsx")
+Table1<-aggregate(dataset_1$Suicides, by=list(dataset_1$Country),FUN = sum)
+Table2<-aggregate(dataset_1$Population, by=list(dataset_1$Country),FUN = sum)
+Table3<-aggregate(dataset_1$HDI, by=list(dataset_1$Country),FUN = mean)
+
+Table4<-merge(Table1,Table2,by=c("Group.1"))
+Table5<-merge(Table4,Table3,by=c("Group.1"))
+write_xlsx(Table5,"Aggregate_Dataset_HDI.xlsx")
+
+
+
+
+#Decreasing # of Age_Group
+#Main Dataset: Aggregating by Country, Gender, Age Group
+library(readxl)
+library(writexl)
+dataset_1<-read_excel("Aggregate_Dataset_Main_bis.xlsx")
+Table1<-aggregate(dataset_1$Suicides, by=list(dataset_1$Country,dataset_1$Gender,dataset_1$Age_Group),FUN = sum)
+Table2<-aggregate(dataset_1$Population, by=list(dataset_1$Country,dataset_1$Gender,dataset_1$Age_Group),FUN = sum)
+Table3<-aggregate(dataset_1$HDI, by=list(dataset_1$Country,dataset_1$Gender,dataset_1$Age_Group),FUN = mean)
+Table4<-aggregate(dataset_1$GDP, by=list(dataset_1$Country,dataset_1$Gender,dataset_1$Age_Group),FUN = mean)
+
+Table5<-merge(Table1,Table2,by=c("Group.1","Group.2","Group.3"))
+Table6<-merge(Table5,Table3,by=c("Group.1","Group.2","Group.3"))
+Table7<-merge(Table6,Table4,by=c("Group.1","Group.2","Group.3"))
+write_xlsx(Table7,"Aggregate_Dataset_Main.xlsx")
+
+
+#Age_Group Dataset: Aggregating by Country and Gender
+dataset_1<-read_excel("Aggregate_Dataset_Age_bis.xlsx")
+Table1<-aggregate(dataset_1$Suicides, by=list(dataset_1$Country,dataset_1$Age_Group),FUN = sum)
+Table2<-aggregate(dataset_1$Population, by=list(dataset_1$Country,dataset_1$Age_Group),FUN = sum)
+Table3<-merge(Table1,Table2,by=c("Group.1","Group.2"))
+write_xlsx(Table3,"Aggregate_Dataset_Age_Group.xlsx")
